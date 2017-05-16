@@ -1,0 +1,50 @@
+import Fugue.System.Policy as .
+
+composition
+
+# Accounts
+fugueAcct: Account { accountId: "fugue-1494520834248" }
+devAcct: Account { accountId: "dev-1494521384240" }
+qaAcct: Account { accountId: "qa-1494521390994" }
+prodAcct: Account { accountId: "prod-1494521398289" }
+sharedAcct: Account { accountId: "shared-1494521378266" }
+
+# Principals (Users)
+adminUser: User { userId: "admin" }
+ciUser: User { userId: "ci" }
+readOnlyUser: User { userId: "readOnly" }
+
+# Groups (Lists of Users)
+adminGroup: [adminUser]
+ciGroup: [ciUser]
+readOnlyGroup: [readOnlyUser]
+
+# Policies
+adminRules: [
+  accountTableRules {
+    principals: adminGroup, 
+    actions: allAccountTableActions
+  },
+  accountRules {
+    principals: [adminUser], 
+    accounts: [AllAccounts],
+    actions: allAccountActions
+  },
+  rbacRules {
+    principals: [adminUser],
+    actions: allRbacActions 
+  }
+]
+
+ciRules: [ 
+  accountRules {
+    principals: ciGroup,
+    accounts: [devAcct,qaAcct,prodAcct,sharedAcct],
+    actions: [
+      AccountRunProcess,
+      AccountUpdateProcess,
+      AccountStatusProcess,
+      AccountKillProcess,    
+    ]
+  }
+]
