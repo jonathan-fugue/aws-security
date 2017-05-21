@@ -1,0 +1,31 @@
+composition
+
+import Fugue.AWS.IAM as IAM
+
+readFromArtifactRepoS3Bucket: '{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::saboRepo"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": ["arn:aws:s3:::saboRepo/*"]
+    }
+  ]
+}'
+
+artifactRepoUser: IAM.User.new {
+  userName: "artifactRepoUser",
+  inlinePolicies: [
+    IAM.Policy {
+      policyName: "readFromArtifactRepoS3Bucket",
+      policyDocument: readFromArtifactRepoS3Bucket
+    }
+  ]
+}
