@@ -15,7 +15,10 @@ readFromArtifactRepoS3Bucket: '{
       "Action": [
         "s3:GetObject"
       ],
-      "Resource": ["arn:aws:s3:::saboRepo/*"]
+      "Resource": [
+        "arn:aws:s3:::saboRepo/2017.01.20-2/*",
+        "arn:aws:s3:::saboRepo/2017.05.23/*"
+      ]
     }
   ]
 }'
