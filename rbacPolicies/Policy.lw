@@ -2,22 +2,23 @@ import Fugue.System.Policy as .
 
 composition
 
-# Accounts
-fugueAcct: Account { accountId: "fugue-1494520834248" }
-devAcct: Account { accountId: "dev-1494521384240" }
-qaAcct: Account { accountId: "qa-1494521390994" }
-prodAcct: Account { accountId: "prod-1494521398289" }
-sharedAcct: Account { accountId: "shared-1494521378266" }
-
 # Principals (Users)
-adminUser: User { userId: "admin" }
-ciUser: User { userId: "ci" }
+adminUser:    User { userId: "admin" }
+saboUser:     User { userId: "sabo" }
+ciUser:       User { userId: "ci" }
 readOnlyUser: User { userId: "readOnly" }
 
 # Groups (Lists of Users)
-adminGroup: [adminUser]
-ciGroup: [ciUser]
+adminGroup:    [adminUser,saboUser]
+devOpsGroup:   [ciUser]
 readOnlyGroup: [readOnlyUser]
+
+# Accounts
+fugueAcct:  NamedAccount { accountName: "fugue" }
+devAcct:    NamedAccount { accountName: "dev" }
+qaAcct:     NamedAccount { accountName: "qa" }
+prodAcct:   NamedAccount { accountName: "prod" }
+sharedAcct: NamedAccount { accountName: "shared" }
 
 # Policies
 adminRules: [
@@ -36,15 +37,26 @@ adminRules: [
   }
 ]
 
-ciRules: [ 
+devOpsRules: [ 
   accountRules {
-    principals: ciGroup,
+    principals: devOpsGroup,
     accounts: [devAcct,qaAcct,prodAcct,sharedAcct],
     actions: [
       AccountRunProcess,
       AccountUpdateProcess,
       AccountStatusProcess,
       AccountKillProcess,    
+    ]
+  }
+]
+
+readOnlyRules: [
+  accountRules {
+    principals: readOnlyGroup,
+    accounts: [fugueAcct,devAcct,qaAcct,prodAcct,sharedAcct],
+    actions: [
+      AccountStatusProcess,
+      AccountHistoryProcess,
     ]
   }
 ]

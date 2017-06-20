@@ -18,8 +18,7 @@ readFromArtifactRepoS3Bucket: '{
       "Resource": [
         "arn:aws:s3:::saboRepo/2017.01.20-2/*",
         "arn:aws:s3:::saboRepo/2017.05.23/*",
-        "arn:aws:s3:::saboRepo/2017.06.12/*",
-        "arn:aws:s3:::saboRepo/testing/*"
+        "arn:aws:s3:::saboRepo/2017.06.12/*"
       ]
     }
   ]
