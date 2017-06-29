@@ -23,21 +23,21 @@ sharedAcct: NamedAccount { accountName: "shared" }
 # Policies
 adminRules: [
   accountTableRules {
-    principals: adminGroup, 
+    principals: adminGroup,
     actions: allAccountTableActions
   },
   accountRules {
-    principals: [adminUser], 
+    principals: [adminUser],
     accounts: [AllAccounts],
     actions: allAccountActions
   },
   rbacRules {
     principals: [adminUser],
-    actions: allRbacActions 
+    actions: allRbacActions
   }
 ]
 
-devOpsRules: [ 
+devOpsRules: [
   accountRules {
     principals: devOpsGroup,
     accounts: [devAcct,qaAcct,prodAcct,sharedAcct],
@@ -45,7 +45,7 @@ devOpsRules: [
       AccountRunProcess,
       AccountUpdateProcess,
       AccountStatusProcess,
-      AccountKillProcess,    
+      AccountKillProcess,
     ]
   }
 ]
@@ -53,7 +53,7 @@ devOpsRules: [
 readOnlyRules: [
   accountRules {
     principals: readOnlyGroup,
-    accounts: [fugueAcct,devAcct,qaAcct,prodAcct,sharedAcct],
+    accounts: [devAcct,qaAcct,prodAcct,sharedAcct],
     actions: [
       AccountStatusProcess,
       AccountHistoryProcess,
