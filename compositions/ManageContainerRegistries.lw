@@ -1,0 +1,54 @@
+composition
+
+import Fugue.AWS.IAM as IAM
+
+allowedAccounts: [
+  "225195660222",
+  "303462153582",
+  "562830053417",
+  "481494938442"
+]
+
+repoPolicy: makeECSContainerRepoPolicy("basic", allowedAccounts)
+
+fun makeECSContainerRepoPolicy(name: String, accounts: List<String>) -> IAM.Policy:
+  let n: List.length(accounts)
+  # all but last
+  let withComma:
+    List.each(
+      List.slice { start: 0, length: n - 1, list: accounts },
+      fun(x): {account: x, comma: True}
+    )
+  # last
+  let noComma:
+    { account: List.elementAt(n - 1, accounts) , comma: False }
+  IAM.Policy.new {
+    policyName: name ++ "-ecr-policy",
+    policyDocument:
+      Template.render {
+        data: {name: name, accounts: List.concat(withComma, [noComma])},
+        template:
+          '{
+            "Version": "2008-10-17",
+            "Statement": [
+              {
+                "Sid": "AllowPull",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": [
+                    {{#accounts}}
+                    "arn:aws:iam::{{account}}:root"{{#comma}},{{/comma}}
+                    {{/accounts}}
+                  ]
+                },
+                "Action": [
+                  "ecr:GetDownloadUrlForLayer",
+                  "ecr:BatchGetImage",
+                  "ecr:BatchCheckLayerAvailability"
+                ],
+                "Resource": "arn:aws:ecr:us-east-1:667025317700:repository/*"
+              }
+            ]
+          }'
+      },
+  }
